@@ -7,5 +7,6 @@ export class BcryptService {
 
     async bcryptHash (password: string) {
         const hash = await bcrypt.hash(password, this.saltOrRounds);
+        return hash
     }
 }

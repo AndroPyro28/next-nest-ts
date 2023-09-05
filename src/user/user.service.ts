@@ -4,13 +4,13 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma.service';
 import { BcryptService } from 'src/bcrypt.service';
 import {User} from '@prisma/client'
+
 @Injectable()
 export class UserService {
 
-  constructor(private prisma: PrismaService, private bcrypt: BcryptService) {}
+  constructor(private prisma: PrismaService, private bcryptService: BcryptService) {}
 
   async create(createUserDto: CreateUserDto): Promise<Omit<User, 'password'>> {
-
     const user = await this.prisma.user.findUnique({
       where: {
         email: createUserDto.email
@@ -20,12 +20,15 @@ export class UserService {
     if(!!user) {
       throw new ConflictException('email duplicated')
     }
+    const hashPwd = await this.bcryptService.bcryptHash(createUserDto.password)
 
     const newUser = await this.prisma.user.create({
       data: {
-        ...createUserDto
+        ...createUserDto,
+        password: hashPwd
       }
     })
+
     const {password, ...rest} = newUser
     
     return {...rest}

@@ -1,26 +1,65 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { LoginDto } from './dto/auth.dto';
+import { UserService } from 'src/user/user.service';
+import { BcryptService } from 'src/common/utils/bcrypt.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  /**
+   *
+   */
+  constructor(
+    private userService: UserService,
+    private Bcrypt: BcryptService,
+    private jwtService: JwtService,
+  ) {}
+
+  async login(dto: LoginDto) {
+    const user = await this.validateUser(dto);
+    const payload = {
+      id: user.id,
+      sub: {
+        name: user.name,
+        email: user.email,
+      }
+    }
+
+    const accessToken = this.jwtService.sign(payload, {
+      expiresIn: '1h',
+      secret: process.env.JWT_ACCESSTOKEN_SECRET_KEY
+    });
+
+    const refreshToken = this.jwtService.sign(payload, {
+      expiresIn: '7d',
+      secret: process.env.JWT_REFRESHTOKEN_SECRET_KEY
+    });
+
+    return {
+      user,
+      authTokens: {
+        accessToken,
+        refreshToken
+      }
+    };
   }
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+  private async validateUser(dto: LoginDto) {
+    
+    const user = await this.userService.findByEmail(dto.email);
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+    const isMatch = await this.Bcrypt.bcryptCompare(
+      dto.password,
+      user.password,
+    );
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+    if(!isMatch) {
+      throw new UnauthorizedException('Invalid Credentials');
+    }
+
+      const { password, ...rest } = user;
+
+      return { ...rest };
   }
 }

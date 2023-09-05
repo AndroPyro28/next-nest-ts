@@ -9,4 +9,9 @@ export class BcryptService {
         const hash = await bcrypt.hash(password, this.saltOrRounds);
         return hash
     }
+
+    async bcryptCompare (password: string, hashPwd: string) {
+        const isMatch = await bcrypt.compare(password, hashPwd);
+        return isMatch
+    }
 }

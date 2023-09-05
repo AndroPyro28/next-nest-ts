@@ -1,8 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, Param, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { PrismaService } from 'src/prisma.service';
-import { BcryptService } from 'src/bcrypt.service';
+import { PrismaService } from 'src/common/utils/prisma.service';
+import { BcryptService } from 'src/common/utils/bcrypt.service';
 import {User} from '@prisma/client'
 
 @Injectable()
@@ -34,6 +34,20 @@ export class UserService {
     return {...rest}
   }
 
+  async findByEmail(email: string) {
+    const user = await this.prisma.user.findUnique({
+      where:{
+        email
+      }
+    })
+
+    if(!user) {
+      throw new UnauthorizedException('Invalid Credentials')
+    }
+
+    return user;
+  }
+
   findAll() {
     return `This action returns all user`;
   }
@@ -48,5 +62,9 @@ export class UserService {
 
   remove(id: number) {
     return `This action removes a #${id} user`;
+  }
+
+  async getUserProfile(@Param('id') id: number) {
+
   }
 }

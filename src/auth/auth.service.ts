@@ -62,4 +62,28 @@ export class AuthService {
 
       return { ...rest };
   }
+
+
+  async refreshToken(user: any) {
+    const payload = {
+      id: user.id,
+      sub: user.sub
+    }
+
+    const accessToken = this.jwtService.sign(payload, {
+      expiresIn: '1h',
+      secret: process.env.JWT_ACCESSTOKEN_SECRET_KEY
+    });
+
+    const refreshToken = this.jwtService.sign(payload, {
+      expiresIn: '7d',
+      secret: process.env.JWT_REFRESHTOKEN_SECRET_KEY
+    });
+    
+    return {
+        accessToken,
+        refreshToken
+    };
+
+  }
 }

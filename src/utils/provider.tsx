@@ -10,6 +10,7 @@ function Providers({ children }: React.PropsWithChildren) {
     defaultOptions: {
       queries: {
         staleTime: 1000 * 60 * 5,
+        retry:1 // you can true, false, or number 
       },
     },
   });

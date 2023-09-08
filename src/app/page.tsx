@@ -6,14 +6,16 @@ export default function Home() {
   type QueryResponseData = { id: number; email: string; name: string };
 
   const getProfile = query<QueryResponseData>(
-    "/user/2",
+    "/user/4",
     ["user", "profile", 2],
     {},
     {
       Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwic3ViIjp7Im5hbWUiOiJBbmRybyBFdWdlbmlvIiwiZW1haWwiOiJtZW5hbmRyb2V1Z2VuaW8xMDI4QGdtYWlsLmNvbSJ9LCJpYXQiOjE2OTQxNjcyMDAsImV4cCI6MTY5NDE3MDgwMH0.OWfYzneftSu-P2tX2RMfXEG1FRj_vmFC2cOuWeWNT3I",
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwic3ViIjp7Im5hbWUiOiJBbmRybyBFdWdlbmlvIiwiZW1haWwiOiJtZW5hbmRyb2V1Z2VuaW8xMDI4QGdtYWlsLmNvbSJ9LCJpYXQiOjE2OTQyMDMwOTEsImV4cCI6MTY5NDIwNjY5MX0.zPth8DzeNkq4C2X-BRQKJTMaES5Tp1LWgOfjoh-QyCY",
     }
   );
+
+  console.log(getProfile)
 
   type MutateDataValue = { email: string; password: string };
 
@@ -32,6 +34,7 @@ export default function Home() {
     ["login"],
     {}
   );
+
   const handleClick = () => {
     login.mutate(
       {

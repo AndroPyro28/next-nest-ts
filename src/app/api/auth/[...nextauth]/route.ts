@@ -9,9 +9,6 @@ const credentialsSchema = z.object({
   password: z.string().nonempty()
 });
 
-type credentialsType = z.infer<typeof credentialsSchema>
-
-
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -54,6 +51,22 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+  callbacks: {
+    // will run upon signin
+    async jwt({user, token}) {
+
+      if(user) return {...token, ...user} 
+
+      return token;
+    },
+    // will run every time getServerSession and use session use
+    async session({token, session}) {
+      session.user = token.user
+      session.backendTokens = token.backendTokens;
+
+      return session;
+    },
+  }
 };
 
 const handler = NextAuth(authOptions)

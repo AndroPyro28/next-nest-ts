@@ -1,28 +1,53 @@
-"use client"
-import { mutate, query } from '@/hooks/useQueryProcessor';
-import Image from 'next/image'
+"use client";
+import { mutate, query } from "@/hooks/useQueryProcessor";
+import Image from "next/image";
 
 export default function Home() {
+  type QueryResponseData = { id: number; email: string; name: string };
 
-  const profile = query('/user/2', ['user', 'profile', 2],{}, {
-    Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwic3ViIjp7Im5hbWUiOiJBbmRybyBFdWdlbmlvIiwiZW1haWwiOiJtZW5hbmRyb2V1Z2VuaW8xMDI4QGdtYWlsLmNvbSJ9LCJpYXQiOjE2OTQxMTgzNzcsImV4cCI6MTY5NDEyMTk3N30.SB9D4LpTtrvxpSNC9SsPEYhNco662cnyrIdyLPjqNVU"
-  })
+  const getProfile = query<QueryResponseData>(
+    "/user/2",
+    ["user", "profile", 2],
+    {},
+    {
+      Authorization:
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Miwic3ViIjp7Im5hbWUiOiJBbmRybyBFdWdlbmlvIiwiZW1haWwiOiJtZW5hbmRyb2V1Z2VuaW8xMDI4QGdtYWlsLmNvbSJ9LCJpYXQiOjE2OTQxNjcyMDAsImV4cCI6MTY5NDE3MDgwMH0.OWfYzneftSu-P2tX2RMfXEG1FRj_vmFC2cOuWeWNT3I",
+    }
+  );
 
-  console.log(profile.data)
-  
-         const login = mutate<{email: string, password: string}>('/auth/login','POST',['login'], {});
+  type MutateDataValue = { email: string; password: string };
 
-         const handleClick = () => {
-          login.mutate({
-            email: 'menandroeugenio1028@gmail.com',
-            password:'1234'
-          }, {
-            onSuccess(data, variables, context) {
-              console.log('hereee 1', data)
-            },
-          })
-         }
+  type BackendTokens = {
+    accessToken: string;
+    refreshToken: string;
+  };
 
+  type MutateResponseData = {
+    user: QueryResponseData;
+    authTokens: BackendTokens;
+  };
+  const login = mutate<MutateDataValue, MutateResponseData>(
+    "/auth/login",
+    "POST",
+    ["login"],
+    {}
+  );
+  const handleClick = () => {
+    login.mutate(
+      {
+        email: "menandroeugenio1028@gmail.com",
+        password: "1234",
+      },
+      {
+        onSuccess(data, variables, context) {
+          console.log("hereee 1", data);
+        },
+        onError: () => {
+          console.log("hitted");
+        },
+      }
+    );
+  };
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
@@ -38,7 +63,7 @@ export default function Home() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            By{' '}
+            By{" "}
             <Image
               src="/vercel.svg"
               alt="Vercel Logo"
@@ -71,7 +96,7 @@ export default function Home() {
           rel="noopener noreferrer"
         >
           <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
+            Docs{" "}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
@@ -88,7 +113,7 @@ export default function Home() {
           rel="noopener noreferrer"
         >
           <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
+            Learn{" "}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
@@ -105,7 +130,7 @@ export default function Home() {
           rel="noopener noreferrer"
         >
           <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
+            Templates{" "}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
@@ -122,7 +147,7 @@ export default function Home() {
           rel="noopener noreferrer"
         >
           <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
+            Deploy{" "}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
               -&gt;
             </span>
@@ -133,5 +158,5 @@ export default function Home() {
         </a>
       </div>
     </main>
-  )
+  );
 }

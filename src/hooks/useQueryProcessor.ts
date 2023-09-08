@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const apiClient = axios.create({
@@ -12,16 +12,26 @@ export const query = <T>(
   options = {},
   headers = {}
 ) => {
-  return useQuery({
+  
+  return useQuery<T>({
+  // @ts-nocheck
+  // @ts-ignore
     queryKey: key,
-    queryFn: async () =>
-      (
-        await apiClient.get<T>(url, {
+    queryFn: async () => {
+      try {
+        const { data, } = await apiClient.get<T>(url, {
           headers: {
             ...headers,
           },
         })
-      ).data,
+        return data;
+      } catch (error:any) {
+        console.error(error)
+        const {message, statusCode:status} = error.response.data;
+        return {message, status}
+      } 
+    }
+      ,
     ...options,
   });
 };
@@ -35,45 +45,72 @@ const mutationMethod = async <T>(
   headers = {}
 ) => {
   switch (method) {
-    case "DELETE":
-      return (
-        await apiClient.delete<T>(url, {
+    case "DELETE": {
+      try {
+        const {data} = await apiClient.delete<T>(url, {
           headers: {
             ...headers,
           },
         })
-      ).data;
-    case "PATCH":
-      return (
-        await apiClient.patch<T>(url, value, {
+        return data
+      } catch (error:any) {
+        console.error(error)
+        const {message, statusCode:status} = error.response.data;
+        return {message, status}
+      } 
+    }
+      
+    case "PATCH": {
+      try {
+        const {data} = await apiClient.patch<T>(url, value, {
           headers: {
             ...headers,
           },
         })
-      ).data;
-    case "POST":
-      return (
-        await apiClient.post<T>(url, value, {
+        return data
+      } catch (error:any) {
+        console.error(error)
+        const {message, statusCode:status} = error.response.data;
+        return {message, status}
+      } 
+    }
+      
+    case "POST": {
+      try {
+        const {data} = await apiClient.post<T>(url, value, {
           headers: {
             ...headers,
           },
         })
-      ).data;
-    case "PUT":
-      return (
-        await apiClient.put<T>(url, value, {
+        return data
+      } catch (error:any) {
+        console.error(error)
+        const {message, statusCode:status} = error.response.data;
+        return {message, status}
+      } 
+    }
+    case "PUT": {
+      try {
+        const {data} = await apiClient.put<T>(url, value, {
           headers: {
             ...headers,
           },
         })
-      ).data;
+        return data
+      } catch (error:any) {
+        console.error(error)
+        const {message, statusCode:status} = error.response.data;
+        return {message, status}
+      } 
+    }
+      
 
     default:
       throw new Error("Invalid mutation method");
   }
 };
 
-export const mutate = <T>(
+export const mutate = <T, K>(
   url: string,
   method: HttpMutationMethod,
   key: any[],
@@ -84,11 +121,11 @@ export const mutate = <T>(
 
   return useMutation({
     ...options,
-    mutationFn: async (value: T) =>
-      mutationMethod<T>(url, method, value, headers),
+    mutationFn: async (value: T) => mutationMethod<T>(url, method, value, headers) as K,
     onMutate: (newData: T) => {
       const previousData = queryClient.getQueryData<T>(key);
       const isArray = Array.isArray(previousData);
+
       //checking if the previous data is an array type if yes then update the array data
       if (isArray) {
         // @ts-ignore

@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosResponse, AxiosError  } from "axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const apiClient = axios.create({
@@ -23,6 +23,12 @@ export const query = <T>(
       return data;
     },
     ...options,
+    onError(error) {
+      console.log('🚀 error query processor 🚀')
+    },
+    onSuccess(data) {
+      console.log('🚀 succes query processor 🚀')
+    },
   });
 };
 
@@ -103,12 +109,23 @@ export const mutate = <T, K>(
       return { previousData };
     },
     onError: (err, newTodo, context) => {
+      if (axios.isAxiosError(err)) {
+        console.error(err.response?.data.message);
+        window.alert(err.response?.data.message)
+      } else {
+        console.error(err);
+      }
       // @ts-ignore
       // @ts-nocheck
       queryClient.setQueryData(key, context.previousData);
+      console.log(' 🚀 error mutate processor 🚀')
+    },
+    onSuccess(data, variables, context) {
+      console.log(' 🚀 success mutate processor 🚀')
     },
     onSettled: (data) => {
       queryClient.invalidateQueries(key);
+      console.log(' 🚀 settled mutate processor 🚀')
     },
   });
 };

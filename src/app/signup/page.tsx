@@ -5,8 +5,6 @@ import { mutate, query } from "@/hooks/useQueryProcessor";
 import Link from "next/link";
 import React, { useRef } from "react";
 
-
-
 const SignupPage = () => {
 
     type FormInputs = {
@@ -30,9 +28,9 @@ const SignupPage = () => {
 
   const handleSignup = () => {
     signup.mutate(data.current,{
-        onSettled: (data) => {
-            console.log(data)
-        }
+        onSuccess(data, variables, context) {
+          window.alert('user registered')
+        },
     })
   }
 

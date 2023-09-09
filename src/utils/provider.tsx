@@ -1,4 +1,3 @@
-"use client";
 
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -10,7 +9,7 @@ function Providers({ children }: React.PropsWithChildren) {
     defaultOptions: {
       queries: {
         staleTime: 1000 * 60 * 5,
-        retry:1 // you can true, false, or number 
+        retry: 2 // you can true, false, or number 
       },
     },
   });

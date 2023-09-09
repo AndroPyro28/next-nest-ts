@@ -14,7 +14,7 @@ const InputBox = ({ labelText, error, ...props }: Props) => {
         {labelText}
       </label>
       <input
-        className={`border  rounded-md disabled:border-slate-100 w-full block outline-none py-2 px-1 transition-all text-xs lg:text-sm xl:text-base  bg-slate-50 focus:shadow focus:shadow-blue-500 
+        className={`border  rounded-md text-black disabled:border-slate-100 w-full block outline-none py-2 px-1 transition-all text-xs lg:text-sm xl:text-base  bg-slate-50 focus:shadow focus:shadow-blue-500 
               ${
                 error ? " border-red-500   animate-shake" : "border-slate-400"
               }`}

@@ -9,7 +9,7 @@ declare module "next-auth" {
             email:string;
             name: string;
         },
-        backendTokens: {
+        authTokens: {
             accessToken: string;
             refreshToken: string;
         }
@@ -23,7 +23,7 @@ declare module 'next-auth/jwt' {
             email:string;
             name: string;
         },
-        backendTokens: {
+        authTokens: {
             accessToken: string;
             refreshToken: string;
         }

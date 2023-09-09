@@ -1,4 +1,3 @@
-import { mutate, query } from "@/hooks/useQueryProcessor";
 import axios from "axios";
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -30,7 +29,6 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials, req):Promise<any> {
         const isFilled = credentialsSchema.safeParse(credentials)
-        // const login = mutate<credentialsType>('/auth/login','POST',['login'], {});
         
         if(!isFilled.success) {
             throw new Error("Invalid Credentials");
@@ -45,28 +43,29 @@ export const authOptions: NextAuthOptions = {
             throw new Error("Invalid Credentials");
           }
           
-          const user = res.data;
+          const data = res.data;
           
-        return user;
+        return data;
       },
     }),
   ],
   callbacks: {
     // will run upon signin
-    async jwt({user, token}) {
-
+    async jwt({user, token,}) {
+ 
       if(user) return {...token, ...user} 
 
       return token;
     },
     // will run every time getServerSession and use session use
     async session({token, session}) {
+      console.log('🚀 session callback 🚀')
       session.user = token.user
-      session.backendTokens = token.backendTokens;
+      session.authTokens = token.authTokens;
 
       return session;
     },
-  }
+  },
 };
 
 const handler = NextAuth(authOptions)

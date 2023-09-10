@@ -11,6 +11,7 @@ export class AuthController {
 
   @Post('register')
   async registerUser(@Body() createAuthDto: CreateUserDto) {
+    console.log('register hitted')
     return this.userService.create(createAuthDto);
   }
 
@@ -24,6 +25,7 @@ export class AuthController {
   @UseGuards(RefreshJwtGuard)
   @Get('refresh')
   async refreshToken(@Req() req) {
+    console.log('refresh hitted')
     return await this.authService.refreshToken(req.user)
   }
 

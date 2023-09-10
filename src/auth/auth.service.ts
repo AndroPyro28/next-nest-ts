@@ -6,6 +6,8 @@ import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
+
+  private EXPIRE_TIME = 20 * 1000 ;
   /**
    *
    */
@@ -26,7 +28,7 @@ export class AuthService {
     }
 
     const accessToken = this.jwtService.sign(payload, {
-      expiresIn: '1h',
+      expiresIn: '20s',
       secret: process.env.JWT_ACCESSTOKEN_SECRET_KEY
     });
 
@@ -39,7 +41,8 @@ export class AuthService {
       user,
       authTokens: {
         accessToken,
-        refreshToken
+        refreshToken,
+        expiresIn: new Date().setTime(new Date().getTime() + this.EXPIRE_TIME),
       }
     };
   }
@@ -82,7 +85,8 @@ export class AuthService {
     
     return {
         accessToken,
-        refreshToken
+        refreshToken,
+        expiresIn: new Date().setTime(new Date().getTime() + this.EXPIRE_TIME),
     };
 
   }

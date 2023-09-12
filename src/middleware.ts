@@ -1,6 +1,12 @@
-import {withAuth} from "next-auth/middleware"
+import middleware, {withAuth} from "next-auth/middleware"
 
-export default withAuth({
+export default withAuth(function middleware(req) {
+    const {pathname} = req.nextUrl
+    const email = req.nextauth.token?.user.email
+
+    // role based authentication conditional statement
+},{
+
     pages: {
         signIn: '/api/auth/signin',
     },

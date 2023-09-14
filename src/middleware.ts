@@ -6,7 +6,6 @@ export default withAuth(function middleware(req) {
 
     // role based authentication conditional statement
 },{
-
     pages: {
         signIn: '/api/auth/signin',
     },
